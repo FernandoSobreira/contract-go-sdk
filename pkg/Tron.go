@@ -19,16 +19,16 @@ import (
 	"time"
 )
 
-// Torn
+// Tron
 // Contract struct
-type Torn struct {
+type Tron struct {
 	Account     *Account
 	client      *client.GrpcClient
 	transaction *core.Transaction
 }
 
 // initClient
-func (t *Torn) initClient() error {
+func (t *Tron) initClient() error {
 	t.client = &client.GrpcClient{}
 	t.client.SetTimeout(10 * time.Second)
 
@@ -36,7 +36,7 @@ func (t *Torn) initClient() error {
 }
 
 // createAddress
-func (t *Torn) createAddress() (*Account, error) {
+func (t *Tron) createAddress() (*Account, error) {
 
 	privateKeyECDSA, err := ecdsa.GenerateKey(crypto.S256(), rand.Reader)
 	if err != nil {
@@ -54,7 +54,7 @@ func (t *Torn) createAddress() (*Account, error) {
 }
 
 // trans
-func (t *Torn) trans(number, feeLimit int64) (bool, []byte, error) {
+func (t *Tron) trans(number, feeLimit int64) (bool, []byte, error) {
 
 	err := t.initClient()
 	if err != nil {
@@ -66,7 +66,7 @@ func (t *Torn) trans(number, feeLimit int64) (bool, []byte, error) {
 }
 
 // trans20
-func (t *Torn) trans20(number, feeLimit int64) (bool, []byte, error) {
+func (t *Tron) trans20(number, feeLimit int64) (bool, []byte, error) {
 
 	err := t.initClient()
 	if err != nil {
@@ -94,7 +94,7 @@ func (t *Torn) trans20(number, feeLimit int64) (bool, []byte, error) {
 }
 
 // freeze
-func (t *Torn) freeze(number int64) (bool, []byte, error) {
+func (t *Tron) freeze(number int64) (bool, []byte, error) {
 
 	err := t.initClient()
 	if err != nil {
@@ -118,7 +118,7 @@ func (t *Torn) freeze(number int64) (bool, []byte, error) {
 }
 
 // unFreeze
-func (t *Torn) unFreeze(number int64) (bool, []byte, error) {
+func (t *Tron) unFreeze(number int64) (bool, []byte, error) {
 
 	err := t.initClient()
 	if err != nil {
@@ -142,7 +142,7 @@ func (t *Torn) unFreeze(number int64) (bool, []byte, error) {
 }
 
 // witness
-func (t *Torn) witness(witnessMap map[string]int64) (bool, []byte, error) {
+func (t *Tron) witness(witnessMap map[string]int64) (bool, []byte, error) {
 
 	err := t.initClient()
 	if err != nil {
@@ -166,7 +166,7 @@ func (t *Torn) witness(witnessMap map[string]int64) (bool, []byte, error) {
 }
 
 // witnessWithdraw
-func (t *Torn) witnessWithdraw() (bool, []byte, error) {
+func (t *Tron) witnessWithdraw() (bool, []byte, error) {
 
 	err := t.initClient()
 	if err != nil {
@@ -190,7 +190,7 @@ func (t *Torn) witnessWithdraw() (bool, []byte, error) {
 }
 
 // getBalance
-func (t *Torn) getBalance() (*Wallet, error) {
+func (t *Tron) getBalance() (*Wallet, error) {
 	err := t.initClient()
 	if err != nil {
 		return nil, err
@@ -217,7 +217,7 @@ func (t *Torn) getBalance() (*Wallet, error) {
 }
 
 // broadcast
-func (t *Torn) broadcast() (*api.Return, error) {
+func (t *Tron) broadcast() (*api.Return, error) {
 	if t.transaction == nil {
 		return nil, errors.New("t.transaction [ERROR] : transaction is nil")
 	}
@@ -235,7 +235,7 @@ func (t *Torn) broadcast() (*api.Return, error) {
 }
 
 // sign
-func (t *Torn) sign() error {
+func (t *Tron) sign() error {
 
 	privateDec, err := common.Decode(t.Account.PrivateKey)
 	if err != nil {

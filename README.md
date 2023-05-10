@@ -20,6 +20,6 @@
 
 ```go
 
-go get github.com/FernandoSobreira/contract-coin-sdk
+go get github.com/FernandoSobreira/contract-go-sdk
 
 ```

@@ -117,6 +117,30 @@ func (t *Torn) freeze(number int64) (bool, []byte, error) {
 	return bro.Result, bro.Message, nil
 }
 
+// unFreeze
+func (t *Torn) unFreeze(number int64) (bool, []byte, error) {
+
+	err := t.initClient()
+	if err != nil {
+		return false, nil, err
+	}
+	defer t.client.Conn.Close()
+
+	res, err := t.client.UnfreezeBalanceV2(t.Account.PublicAddress, core.ResourceCode_ENERGY, number)
+	if err != nil {
+		return false, nil, errors.New(fmt.Sprintf("t.client.FreezeBalanceV2 [ERROR] : %v", err))
+	}
+
+	t.transaction = res.GetTransaction()
+
+	bro, err := t.broadcast()
+	if err != nil {
+		return false, nil, err
+	}
+
+	return bro.Result, bro.Message, nil
+}
+
 // witness
 func (t *Torn) witness(witnessMap map[string]int64) (bool, []byte, error) {
 
@@ -163,6 +187,33 @@ func (t *Torn) witnessWithdraw() (bool, []byte, error) {
 	}
 
 	return bro.Result, bro.Message, nil
+}
+
+// getBalance
+func (t *Torn) getBalance() (*Wallet, error) {
+	err := t.initClient()
+	if err != nil {
+		return nil, err
+	}
+	defer t.client.Conn.Close()
+
+	account, err := t.client.GetAccount(t.Account.PublicAddress)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("t.client.GetAccount [ERROR] : %v", err))
+	}
+
+	coin, err := t.client.TRC20ContractBalance(t.Account.PublicAddress, t.Account.ContractAddress)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("t.client.TRC20ContractBalance [ERROR] : %v", err))
+	}
+
+	return &Wallet{
+		TRX:   account.GetBalance(),
+		TRC20: coin.Int64(),
+		ERC20: 0,
+		OKTC:  0,
+	}, nil
+
 }
 
 // broadcast

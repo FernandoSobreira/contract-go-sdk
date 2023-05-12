@@ -19,6 +19,16 @@ import (
 	"time"
 )
 
+// ResourceCode
+// Account Resource
+type ResourceCode int32
+
+const (
+	ResourceCode_BANDWIDTH  ResourceCode = 0
+	ResourceCode_ENERGY     ResourceCode = 1
+	ResourceCode_TRON_POWER ResourceCode = 2
+)
+
 // Tron
 // Contract struct
 type Tron struct {
@@ -80,7 +90,7 @@ func (t *Tron) trans20(number, feeLimit int64) (bool, []byte, error) {
 
 	res, err := t.client.TRC20Send(t.Account.PublicAddress, t.Account.ToAddress, t.Account.ContractAddress, big.NewInt(number), feeLimit)
 	if err != nil {
-		return false, nil, errors.New(fmt.Sprintf("t.client.TRC20Send [ERROR] : %v", err))
+		return false, nil, err
 	}
 
 	t.transaction = res.GetTransaction()
@@ -94,7 +104,7 @@ func (t *Tron) trans20(number, feeLimit int64) (bool, []byte, error) {
 }
 
 // freeze
-func (t *Tron) freeze(number int64) (bool, []byte, error) {
+func (t *Tron) freeze(number int64, code ResourceCode) (bool, []byte, error) {
 
 	err := t.initClient()
 	if err != nil {
@@ -102,9 +112,9 @@ func (t *Tron) freeze(number int64) (bool, []byte, error) {
 	}
 	defer t.client.Conn.Close()
 
-	res, err := t.client.FreezeBalanceV2(t.Account.PublicAddress, core.ResourceCode_ENERGY, number)
+	res, err := t.client.FreezeBalanceV2(t.Account.PublicAddress, core.ResourceCode(code), number)
 	if err != nil {
-		return false, nil, errors.New(fmt.Sprintf("t.client.FreezeBalanceV2 [ERROR] : %v", err))
+		return false, nil, err
 	}
 
 	t.transaction = res.GetTransaction()
@@ -128,7 +138,7 @@ func (t *Tron) unFreeze(number int64) (bool, []byte, error) {
 
 	res, err := t.client.UnfreezeBalanceV2(t.Account.PublicAddress, core.ResourceCode_ENERGY, number)
 	if err != nil {
-		return false, nil, errors.New(fmt.Sprintf("t.client.FreezeBalanceV2 [ERROR] : %v", err))
+		return false, nil, err
 	}
 
 	t.transaction = res.GetTransaction()
@@ -152,7 +162,7 @@ func (t *Tron) witness(witnessMap map[string]int64) (bool, []byte, error) {
 
 	res, err := t.client.VoteWitnessAccount(t.Account.PublicAddress, witnessMap)
 	if err != nil {
-		return false, nil, errors.New(fmt.Sprintf("t.client.VoteWitnessAccount [ERROR]: %v", err))
+		return false, nil, err
 	}
 
 	t.transaction = res.Transaction
@@ -176,7 +186,7 @@ func (t *Tron) witnessWithdraw() (bool, []byte, error) {
 
 	res, err := t.client.WithdrawBalance(t.Account.PublicAddress)
 	if err != nil {
-		return false, nil, errors.New(fmt.Sprintf("t.client.WithdrawBalance [ERROR] : %v", err))
+		return false, nil, err
 	}
 
 	t.transaction = res.GetTransaction()
@@ -189,6 +199,64 @@ func (t *Tron) witnessWithdraw() (bool, []byte, error) {
 	return bro.Result, bro.Message, nil
 }
 
+// delegateResource
+func (t *Tron) delegateResource(number int64, code ResourceCode, lock bool) (bool, []byte, error) {
+	err := t.initClient()
+	if err != nil {
+		return false, nil, err
+	}
+	defer t.client.Conn.Close()
+
+	res, err := t.client.DelegateResource(t.Account.PublicAddress, t.Account.ToAddress, core.ResourceCode(code), number, lock)
+	if err != nil {
+		if err != nil {
+			return false, nil, err
+		}
+	}
+
+	t.transaction = res.GetTransaction()
+	err = t.sign()
+	if err != nil {
+		return false, nil, err
+	}
+
+	bro, err := t.broadcast()
+	if err != nil {
+		return false, nil, err
+	}
+
+	return bro.GetResult(), bro.GetMessage(), nil
+}
+
+// unDelegateResource
+func (t *Tron) unDelegateResource(number int64, code ResourceCode, lock bool) (bool, []byte, error) {
+	err := t.initClient()
+	if err != nil {
+		return false, nil, err
+	}
+	defer t.client.Conn.Close()
+
+	res, err := t.client.UnDelegateResource(t.Account.PublicAddress, t.Account.ToAddress, core.ResourceCode(code), number, lock)
+	if err != nil {
+		if err != nil {
+			return false, nil, err
+		}
+	}
+
+	t.transaction = res.GetTransaction()
+	err = t.sign()
+	if err != nil {
+		return false, nil, err
+	}
+
+	bro, err := t.broadcast()
+	if err != nil {
+		return false, nil, err
+	}
+
+	return bro.GetResult(), bro.GetMessage(), nil
+}
+
 // getBalance
 func (t *Tron) getBalance() (*Wallet, error) {
 	err := t.initClient()
@@ -199,12 +267,12 @@ func (t *Tron) getBalance() (*Wallet, error) {
 
 	account, err := t.client.GetAccount(t.Account.PublicAddress)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("t.client.GetAccount [ERROR] : %v", err))
+		return nil, err
 	}
 
 	coin, err := t.client.TRC20ContractBalance(t.Account.PublicAddress, t.Account.ContractAddress)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("t.client.TRC20ContractBalance [ERROR] : %v", err))
+		return nil, err
 	}
 
 	return &Wallet{
@@ -216,10 +284,38 @@ func (t *Tron) getBalance() (*Wallet, error) {
 
 }
 
+// getAccountResource
+func (t *Tron) getAccountResource() (*AccountResource, error) {
+	err := t.initClient()
+	if err != nil {
+		return nil, err
+	}
+	defer t.client.Conn.Close()
+
+	res, err := t.client.GetAccountResource(t.Account.PublicAddress)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("t.client.GetAccount [ERROR] : %v", err))
+	}
+
+	return &AccountResource{
+		FreeNetLimit:           res.GetFreeNetLimit(),
+		TotalNetLimit:          res.GetNetLimit(),
+		TotalNetWeight:         res.GetTotalNetWeight(),
+		TronPowerUsed:          res.GetTronPowerUsed(),
+		TronPowerLimit:         res.GetFreeNetLimit(),
+		EnergyLimit:            res.GetEnergyLimit(),
+		TotalEnergyLimit:       res.GetTotalEnergyLimit(),
+		TotalEnergyWeightLimit: res.GetTotalEnergyWeight(),
+		AssetNetUsed:           res.GetAssetNetUsed(),
+		AssetNetLimit:          res.GetAssetNetLimit(),
+	}, nil
+
+}
+
 // broadcast
 func (t *Tron) broadcast() (*api.Return, error) {
 	if t.transaction == nil {
-		return nil, errors.New("t.transaction [ERROR] : transaction is nil")
+		return nil, errors.New("transaction [ERROR] : transaction is nil")
 	}
 
 	err := t.sign()
@@ -229,7 +325,7 @@ func (t *Tron) broadcast() (*api.Return, error) {
 
 	bro, err := t.client.Broadcast(t.transaction)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("t.client.Broadcast [ERROR] : %v", err))
+		return nil, err
 	}
 	return bro, nil
 }

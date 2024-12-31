@@ -295,107 +295,43 @@ func (t *Server) SendTrans(fromAddress, privateKey, toAddress string, number, ga
 	}
 
 	util := pb.NewServerClient(t.cli)
-	var request *pb.GenerateTransRequest
+	var request = &pb.GenerateTransRequest{
+		FromAddress:           fromAddress,
+		FromAddressPrivateKey: privateKey,
+		ToAddress:             toAddress,
+		Number:                number,
+		GasLimit:              gasLimit,
+	}
 	switch t.Target {
 	case BTC_MAIN:
-		request = &pb.GenerateTransRequest{
-			Network:               pb.Network_BTC_MAIN,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_BTC_MAIN
 		break
 	case BTC_TEST:
-		request = &pb.GenerateTransRequest{
-			Network:               pb.Network_BTC_TEST,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_BTC_TEST
 		break
 	case ETH_MAIN:
-		request = &pb.GenerateTransRequest{
-			Network:               pb.Network_ETH_MAIN,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_ETH_MAIN
 		break
 	case ETH_GOERLI:
-		request = &pb.GenerateTransRequest{
-			Network:               pb.Network_ETH_GOERLI,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_ETH_GOERLI
 		break
 	case ETH_SEPOLIA:
-		request = &pb.GenerateTransRequest{
-			Network:               pb.Network_ETH_SEPOLIA,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_ETH_SEPOLIA
 		break
 	case TRON_MAIN:
-		request = &pb.GenerateTransRequest{
-			Network:               pb.Network_TRON_MAIN,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_TRON_MAIN
 		break
 	case TRON_NILE:
-		request = &pb.GenerateTransRequest{
-			Network:               pb.Network_TRON_NILE,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_TRON_NILE
 		break
 	case TRON_SHASTA:
-		request = &pb.GenerateTransRequest{
-			Network:               pb.Network_TRON_SHASTA,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_TRON_SHASTA
 		break
 	case OKX_MAIN:
-		request = &pb.GenerateTransRequest{
-			Network:               pb.Network_OKX_MAIN,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_OKX_MAIN
 		break
 	case OKX_TEST:
-		request = &pb.GenerateTransRequest{
-			Network:               pb.Network_OKX_TEST,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_OKX_TEST
 		break
 	}
 
@@ -415,121 +351,106 @@ func (t *Server) SendTrans20(fromAddress, privateKey, toAddress, contactAddress 
 	}
 
 	util := pb.NewServerClient(t.cli)
-	var request *pb.GenerateTrans20Request
+	request := &pb.GenerateTrans20Request{
+		FromAddress:           fromAddress,
+		FromAddressPrivateKey: privateKey,
+		ToAddress:             toAddress,
+		ContractAddress:       contactAddress,
+		Number:                number,
+		GasLimit:              gasLimit,
+	}
 	switch t.Target {
 	case BTC_MAIN:
-		request = &pb.GenerateTrans20Request{
-			Network:               pb.Network_BTC_MAIN,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			ContractAddress:       contactAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_BTC_MAIN
 		break
 	case BTC_TEST:
-		request = &pb.GenerateTrans20Request{
-			Network:               pb.Network_BTC_TEST,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			ContractAddress:       contactAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_BTC_TEST
 		break
 	case ETH_MAIN:
-		request = &pb.GenerateTrans20Request{
-			Network:               pb.Network_ETH_MAIN,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			ContractAddress:       contactAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_ETH_MAIN
 		break
 	case ETH_GOERLI:
-		request = &pb.GenerateTrans20Request{
-			Network:               pb.Network_ETH_GOERLI,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			ContractAddress:       contactAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_ETH_GOERLI
 		break
 	case ETH_SEPOLIA:
-		request = &pb.GenerateTrans20Request{
-			Network:               pb.Network_ETH_SEPOLIA,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			ContractAddress:       contactAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_ETH_SEPOLIA
 		break
 	case TRON_MAIN:
-		request = &pb.GenerateTrans20Request{
-			Network:               pb.Network_TRON_MAIN,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			ContractAddress:       contactAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_TRON_MAIN
 		break
 	case TRON_NILE:
-		request = &pb.GenerateTrans20Request{
-			Network:               pb.Network_TRON_NILE,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			ContractAddress:       contactAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_TRON_NILE
 		break
 	case TRON_SHASTA:
-		request = &pb.GenerateTrans20Request{
-			Network:               pb.Network_TRON_SHASTA,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			ContractAddress:       contactAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_TRON_SHASTA
 		break
 	case OKX_MAIN:
-		request = &pb.GenerateTrans20Request{
-			Network:               pb.Network_OKX_MAIN,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			ContractAddress:       contactAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_OKX_MAIN
 		break
 	case OKX_TEST:
-		request = &pb.GenerateTrans20Request{
-			Network:               pb.Network_OKX_TEST,
-			FromAddress:           fromAddress,
-			FromAddressPrivateKey: privateKey,
-			ToAddress:             toAddress,
-			ContractAddress:       contactAddress,
-			Number:                number,
-			GasLimit:              gasLimit,
-		}
+		request.Network = pb.Network_OKX_TEST
 		break
 	}
 
 	res, err := util.GenerateTransaction20(context.Background(), request)
+	if err != nil {
+		return "", err
+	}
+	return res.GetTxid(), nil
+}
+
+func (t *Server) SendApprovalTrans20(fromAddress, privateKey, approvalAddress, toAddress, contactAddress string, number, gasLimit uint64) (string, error) {
+
+	if t.cli == nil {
+		if err := t.NewServer(); err != nil {
+			return "", err
+		}
+	}
+
+	util := pb.NewServerClient(t.cli)
+	request := &pb.GenerateApprovalTrans20Request{
+		FromAddress:           fromAddress,
+		FromAddressPrivateKey: privateKey,
+		ToAddress:             toAddress,
+		ApprovalAddress:       approvalAddress,
+		ContractAddress:       contactAddress,
+		Number:                number,
+		GasLimit:              gasLimit,
+	}
+	switch t.Target {
+	case BTC_MAIN:
+		request.Network = pb.Network_BTC_MAIN
+		break
+	case BTC_TEST:
+		request.Network = pb.Network_BTC_TEST
+		break
+	case ETH_MAIN:
+		request.Network = pb.Network_ETH_MAIN
+		break
+	case ETH_GOERLI:
+		request.Network = pb.Network_ETH_GOERLI
+		break
+	case ETH_SEPOLIA:
+		request.Network = pb.Network_ETH_SEPOLIA
+		break
+	case TRON_MAIN:
+		request.Network = pb.Network_TRON_MAIN
+		break
+	case TRON_NILE:
+		request.Network = pb.Network_TRON_NILE
+		break
+	case TRON_SHASTA:
+		request.Network = pb.Network_TRON_SHASTA
+		break
+	case OKX_MAIN:
+		request.Network = pb.Network_OKX_MAIN
+		break
+	case OKX_TEST:
+		request.Network = pb.Network_OKX_TEST
+		break
+	}
+
+	res, err := util.GenerateApprovalTransaction20(context.Background(), request)
 	if err != nil {
 		return "", err
 	}

@@ -286,6 +286,84 @@ func (t *Server) QueryNowBlockTrans(callback func(ctx context.Context, block <-c
 	}
 }
 
+func (t *Server) QueryPendingBlockTrans(callback func(ctx context.Context, block <-chan NowBlock)) error {
+
+	if t.cli == nil {
+		if err := t.NewServer(); err != nil {
+			return err
+		}
+	}
+
+	util := pb.NewServerClient(t.cli)
+	var request *pb.QueryPendingBlockTransRequest
+	blockChan := make(chan NowBlock)
+	defer close(blockChan)
+	switch t.Target {
+	case BTC_MAIN:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_BTC_MAIN}
+		break
+	case BTC_TEST:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_BTC_TEST}
+		break
+	case ETH_MAIN:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_ETH_MAIN}
+		break
+	case ETH_GOERLI:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_ETH_GOERLI}
+		break
+	case ETH_SEPOLIA:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_ETH_SEPOLIA}
+		break
+	case TRON_MAIN:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_TRON_MAIN}
+		break
+	case TRON_NILE:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_TRON_NILE}
+		break
+	case TRON_SHASTA:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_TRON_SHASTA}
+		break
+	case OKX_MAIN:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_OKX_MAIN}
+		break
+	case OKX_TEST:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_OKX_TEST}
+		break
+	}
+
+	blockNext, err := util.QueryPendingBlockTrans(context.Background(), request)
+	if err != nil {
+		return err
+	}
+
+	go callback(blockNext.Context(), blockChan)
+	for {
+		select {
+		case <-blockNext.Context().Done():
+			return blockNext.Context().Err()
+		default:
+			res, err := blockNext.Recv()
+			if err != nil {
+				return err
+			}
+			go func() {
+				defer func() {
+					_ = recover()
+				}()
+				blockChan <- NowBlock{
+					Txid:            res.Txid,
+					Number:          res.Number,
+					FeeLimit:        res.FeeLimit,
+					FromAddress:     res.FromAddress,
+					ToAddress:       res.ToAddress,
+					ContractAddress: res.ContractAddress,
+				}
+			}()
+			break
+		}
+	}
+}
+
 func (t *Server) SendTrans(fromAddress, privateKey, toAddress string, number, gasLimit uint64) (string, error) {
 
 	if t.cli == nil {

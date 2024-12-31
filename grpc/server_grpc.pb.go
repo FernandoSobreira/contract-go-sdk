@@ -19,12 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Server_CreateAccount_FullMethodName         = "/Server/CreateAccount"
-	Server_QueryBalance_FullMethodName          = "/Server/QueryBalance"
-	Server_QueryBalance20_FullMethodName        = "/Server/QueryBalance20"
-	Server_QueryNowBlockTrans_FullMethodName    = "/Server/QueryNowBlockTrans"
-	Server_GenerateTransaction_FullMethodName   = "/Server/GenerateTransaction"
-	Server_GenerateTransaction20_FullMethodName = "/Server/GenerateTransaction20"
+	Server_CreateAccount_FullMethodName          = "/Server/CreateAccount"
+	Server_QueryBalance_FullMethodName           = "/Server/QueryBalance"
+	Server_QueryBalance20_FullMethodName         = "/Server/QueryBalance20"
+	Server_QueryNowBlockTrans_FullMethodName     = "/Server/QueryNowBlockTrans"
+	Server_QueryPendingBlockTrans_FullMethodName = "/Server/QueryPendingBlockTrans"
+	Server_GenerateTransaction_FullMethodName    = "/Server/GenerateTransaction"
+	Server_GenerateTransaction20_FullMethodName  = "/Server/GenerateTransaction20"
 )
 
 // ServerClient is the client API for Server service.
@@ -35,6 +36,7 @@ type ServerClient interface {
 	QueryBalance(ctx context.Context, in *QueryBalanceRequest, opts ...grpc.CallOption) (*QueryBalanceResponse, error)
 	QueryBalance20(ctx context.Context, in *QueryBalance20Request, opts ...grpc.CallOption) (*QueryBalance20Response, error)
 	QueryNowBlockTrans(ctx context.Context, in *QueryNowBlockTransRequest, opts ...grpc.CallOption) (Server_QueryNowBlockTransClient, error)
+	QueryPendingBlockTrans(ctx context.Context, in *QueryPendingBlockTransRequest, opts ...grpc.CallOption) (Server_QueryPendingBlockTransClient, error)
 	GenerateTransaction(ctx context.Context, in *GenerateTransRequest, opts ...grpc.CallOption) (*GenerateTransResponse, error)
 	GenerateTransaction20(ctx context.Context, in *GenerateTrans20Request, opts ...grpc.CallOption) (*GenerateTrans20Response, error)
 }
@@ -106,6 +108,38 @@ func (x *serverQueryNowBlockTransClient) Recv() (*QueryNowBlockTransResponse, er
 	return m, nil
 }
 
+func (c *serverClient) QueryPendingBlockTrans(ctx context.Context, in *QueryPendingBlockTransRequest, opts ...grpc.CallOption) (Server_QueryPendingBlockTransClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Server_ServiceDesc.Streams[1], Server_QueryPendingBlockTrans_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &serverQueryPendingBlockTransClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Server_QueryPendingBlockTransClient interface {
+	Recv() (*QueryPendingBlockTransResponse, error)
+	grpc.ClientStream
+}
+
+type serverQueryPendingBlockTransClient struct {
+	grpc.ClientStream
+}
+
+func (x *serverQueryPendingBlockTransClient) Recv() (*QueryPendingBlockTransResponse, error) {
+	m := new(QueryPendingBlockTransResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *serverClient) GenerateTransaction(ctx context.Context, in *GenerateTransRequest, opts ...grpc.CallOption) (*GenerateTransResponse, error) {
 	out := new(GenerateTransResponse)
 	err := c.cc.Invoke(ctx, Server_GenerateTransaction_FullMethodName, in, out, opts...)
@@ -132,6 +166,7 @@ type ServerServer interface {
 	QueryBalance(context.Context, *QueryBalanceRequest) (*QueryBalanceResponse, error)
 	QueryBalance20(context.Context, *QueryBalance20Request) (*QueryBalance20Response, error)
 	QueryNowBlockTrans(*QueryNowBlockTransRequest, Server_QueryNowBlockTransServer) error
+	QueryPendingBlockTrans(*QueryPendingBlockTransRequest, Server_QueryPendingBlockTransServer) error
 	GenerateTransaction(context.Context, *GenerateTransRequest) (*GenerateTransResponse, error)
 	GenerateTransaction20(context.Context, *GenerateTrans20Request) (*GenerateTrans20Response, error)
 	mustEmbedUnimplementedServerServer()
@@ -152,6 +187,9 @@ func (UnimplementedServerServer) QueryBalance20(context.Context, *QueryBalance20
 }
 func (UnimplementedServerServer) QueryNowBlockTrans(*QueryNowBlockTransRequest, Server_QueryNowBlockTransServer) error {
 	return status.Errorf(codes.Unimplemented, "method QueryNowBlockTrans not implemented")
+}
+func (UnimplementedServerServer) QueryPendingBlockTrans(*QueryPendingBlockTransRequest, Server_QueryPendingBlockTransServer) error {
+	return status.Errorf(codes.Unimplemented, "method QueryPendingBlockTrans not implemented")
 }
 func (UnimplementedServerServer) GenerateTransaction(context.Context, *GenerateTransRequest) (*GenerateTransResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateTransaction not implemented")
@@ -247,6 +285,27 @@ func (x *serverQueryNowBlockTransServer) Send(m *QueryNowBlockTransResponse) err
 	return x.ServerStream.SendMsg(m)
 }
 
+func _Server_QueryPendingBlockTrans_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(QueryPendingBlockTransRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ServerServer).QueryPendingBlockTrans(m, &serverQueryPendingBlockTransServer{stream})
+}
+
+type Server_QueryPendingBlockTransServer interface {
+	Send(*QueryPendingBlockTransResponse) error
+	grpc.ServerStream
+}
+
+type serverQueryPendingBlockTransServer struct {
+	grpc.ServerStream
+}
+
+func (x *serverQueryPendingBlockTransServer) Send(m *QueryPendingBlockTransResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 func _Server_GenerateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GenerateTransRequest)
 	if err := dec(in); err != nil {
@@ -315,6 +374,11 @@ var Server_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "QueryNowBlockTrans",
 			Handler:       _Server_QueryNowBlockTrans_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "QueryPendingBlockTrans",
+			Handler:       _Server_QueryPendingBlockTrans_Handler,
 			ServerStreams: true,
 		},
 	},

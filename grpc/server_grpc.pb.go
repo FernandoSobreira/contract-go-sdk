@@ -19,13 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Server_CreateAccount_FullMethodName          = "/Server/CreateAccount"
-	Server_QueryBalance_FullMethodName           = "/Server/QueryBalance"
-	Server_QueryBalance20_FullMethodName         = "/Server/QueryBalance20"
-	Server_QueryNowBlockTrans_FullMethodName     = "/Server/QueryNowBlockTrans"
-	Server_QueryPendingBlockTrans_FullMethodName = "/Server/QueryPendingBlockTrans"
-	Server_GenerateTransaction_FullMethodName    = "/Server/GenerateTransaction"
-	Server_GenerateTransaction20_FullMethodName  = "/Server/GenerateTransaction20"
+	Server_CreateAccount_FullMethodName                 = "/Server/CreateAccount"
+	Server_QueryBalance_FullMethodName                  = "/Server/QueryBalance"
+	Server_QueryBalance20_FullMethodName                = "/Server/QueryBalance20"
+	Server_QueryNowBlockTrans_FullMethodName            = "/Server/QueryNowBlockTrans"
+	Server_QueryPendingBlockTrans_FullMethodName        = "/Server/QueryPendingBlockTrans"
+	Server_GenerateTransaction_FullMethodName           = "/Server/GenerateTransaction"
+	Server_GenerateTransaction20_FullMethodName         = "/Server/GenerateTransaction20"
+	Server_GenerateApprovalTransaction20_FullMethodName = "/Server/GenerateApprovalTransaction20"
 )
 
 // ServerClient is the client API for Server service.
@@ -39,6 +40,7 @@ type ServerClient interface {
 	QueryPendingBlockTrans(ctx context.Context, in *QueryPendingBlockTransRequest, opts ...grpc.CallOption) (Server_QueryPendingBlockTransClient, error)
 	GenerateTransaction(ctx context.Context, in *GenerateTransRequest, opts ...grpc.CallOption) (*GenerateTransResponse, error)
 	GenerateTransaction20(ctx context.Context, in *GenerateTrans20Request, opts ...grpc.CallOption) (*GenerateTrans20Response, error)
+	GenerateApprovalTransaction20(ctx context.Context, in *GenerateApprovalTrans20Request, opts ...grpc.CallOption) (*GenerateApprovalTrans20Response, error)
 }
 
 type serverClient struct {
@@ -158,6 +160,15 @@ func (c *serverClient) GenerateTransaction20(ctx context.Context, in *GenerateTr
 	return out, nil
 }
 
+func (c *serverClient) GenerateApprovalTransaction20(ctx context.Context, in *GenerateApprovalTrans20Request, opts ...grpc.CallOption) (*GenerateApprovalTrans20Response, error) {
+	out := new(GenerateApprovalTrans20Response)
+	err := c.cc.Invoke(ctx, Server_GenerateApprovalTransaction20_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ServerServer is the server API for Server service.
 // All implementations must embed UnimplementedServerServer
 // for forward compatibility
@@ -169,6 +180,7 @@ type ServerServer interface {
 	QueryPendingBlockTrans(*QueryPendingBlockTransRequest, Server_QueryPendingBlockTransServer) error
 	GenerateTransaction(context.Context, *GenerateTransRequest) (*GenerateTransResponse, error)
 	GenerateTransaction20(context.Context, *GenerateTrans20Request) (*GenerateTrans20Response, error)
+	GenerateApprovalTransaction20(context.Context, *GenerateApprovalTrans20Request) (*GenerateApprovalTrans20Response, error)
 	mustEmbedUnimplementedServerServer()
 }
 
@@ -196,6 +208,9 @@ func (UnimplementedServerServer) GenerateTransaction(context.Context, *GenerateT
 }
 func (UnimplementedServerServer) GenerateTransaction20(context.Context, *GenerateTrans20Request) (*GenerateTrans20Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateTransaction20 not implemented")
+}
+func (UnimplementedServerServer) GenerateApprovalTransaction20(context.Context, *GenerateApprovalTrans20Request) (*GenerateApprovalTrans20Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateApprovalTransaction20 not implemented")
 }
 func (UnimplementedServerServer) mustEmbedUnimplementedServerServer() {}
 
@@ -342,6 +357,24 @@ func _Server_GenerateTransaction20_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Server_GenerateApprovalTransaction20_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateApprovalTrans20Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServerServer).GenerateApprovalTransaction20(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Server_GenerateApprovalTransaction20_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServerServer).GenerateApprovalTransaction20(ctx, req.(*GenerateApprovalTrans20Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Server_ServiceDesc is the grpc.ServiceDesc for Server service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -368,6 +401,10 @@ var Server_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateTransaction20",
 			Handler:    _Server_GenerateTransaction20_Handler,
+		},
+		{
+			MethodName: "GenerateApprovalTransaction20",
+			Handler:    _Server_GenerateApprovalTransaction20_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

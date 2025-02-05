@@ -359,6 +359,7 @@ func (t *Server) QueryPendingBlockTrans(callback func(ctx context.Context, block
 					FromAddress:     res.FromAddress,
 					ToAddress:       res.ToAddress,
 					ContractAddress: res.ContractAddress,
+					Result:          res.Result,
 				}
 			}()
 			break

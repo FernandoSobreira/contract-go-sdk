@@ -40,6 +40,7 @@ type NowBlock struct {
 	FromAddress     string
 	ToAddress       string
 	ContractAddress string
+	Result          string
 }
 
 func (t *Server) NewServer() error {
@@ -279,6 +280,7 @@ func (t *Server) QueryNowBlockTrans(callback func(ctx context.Context, block <-c
 					FromAddress:     res.FromAddress,
 					ToAddress:       res.ToAddress,
 					ContractAddress: res.ContractAddress,
+					Result:          res.Result,
 				}
 			}()
 			break

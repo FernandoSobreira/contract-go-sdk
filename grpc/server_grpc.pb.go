@@ -22,7 +22,7 @@ const (
 	Server_CreateAccount_FullMethodName                 = "/Server/CreateAccount"
 	Server_QueryBalance_FullMethodName                  = "/Server/QueryBalance"
 	Server_QueryBalance20_FullMethodName                = "/Server/QueryBalance20"
-	Server_QueryTransaction20GasPrice_FullMethodName    = "/Server/QueryTransaction20GasPrice"
+	Server_QueryGasPriceByTransaction20_FullMethodName  = "/Server/QueryGasPriceByTransaction20"
 	Server_QueryNowBlockTrans_FullMethodName            = "/Server/QueryNowBlockTrans"
 	Server_QueryPendingBlockTrans_FullMethodName        = "/Server/QueryPendingBlockTrans"
 	Server_GenerateTransaction_FullMethodName           = "/Server/GenerateTransaction"
@@ -37,7 +37,7 @@ type ServerClient interface {
 	CreateAccount(ctx context.Context, in *GenerateAccountRequest, opts ...grpc.CallOption) (*GenerateAccountResponse, error)
 	QueryBalance(ctx context.Context, in *QueryBalanceRequest, opts ...grpc.CallOption) (*QueryBalanceResponse, error)
 	QueryBalance20(ctx context.Context, in *QueryBalance20Request, opts ...grpc.CallOption) (*QueryBalance20Response, error)
-	QueryTransaction20GasPrice(ctx context.Context, in *QueryTransactionGasPriceRequest, opts ...grpc.CallOption) (*QueryTransactionGasPriceResponse, error)
+	QueryGasPriceByTransaction20(ctx context.Context, in *QueryGasPriceByTransaction20Request, opts ...grpc.CallOption) (*QueryGasPriceByTransaction20Response, error)
 	QueryNowBlockTrans(ctx context.Context, in *QueryNowBlockTransRequest, opts ...grpc.CallOption) (Server_QueryNowBlockTransClient, error)
 	QueryPendingBlockTrans(ctx context.Context, in *QueryPendingBlockTransRequest, opts ...grpc.CallOption) (Server_QueryPendingBlockTransClient, error)
 	GenerateTransaction(ctx context.Context, in *GenerateTransRequest, opts ...grpc.CallOption) (*GenerateTransResponse, error)
@@ -80,9 +80,9 @@ func (c *serverClient) QueryBalance20(ctx context.Context, in *QueryBalance20Req
 	return out, nil
 }
 
-func (c *serverClient) QueryTransaction20GasPrice(ctx context.Context, in *QueryTransactionGasPriceRequest, opts ...grpc.CallOption) (*QueryTransactionGasPriceResponse, error) {
-	out := new(QueryTransactionGasPriceResponse)
-	err := c.cc.Invoke(ctx, Server_QueryTransaction20GasPrice_FullMethodName, in, out, opts...)
+func (c *serverClient) QueryGasPriceByTransaction20(ctx context.Context, in *QueryGasPriceByTransaction20Request, opts ...grpc.CallOption) (*QueryGasPriceByTransaction20Response, error) {
+	out := new(QueryGasPriceByTransaction20Response)
+	err := c.cc.Invoke(ctx, Server_QueryGasPriceByTransaction20_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +187,7 @@ type ServerServer interface {
 	CreateAccount(context.Context, *GenerateAccountRequest) (*GenerateAccountResponse, error)
 	QueryBalance(context.Context, *QueryBalanceRequest) (*QueryBalanceResponse, error)
 	QueryBalance20(context.Context, *QueryBalance20Request) (*QueryBalance20Response, error)
-	QueryTransaction20GasPrice(context.Context, *QueryTransactionGasPriceRequest) (*QueryTransactionGasPriceResponse, error)
+	QueryGasPriceByTransaction20(context.Context, *QueryGasPriceByTransaction20Request) (*QueryGasPriceByTransaction20Response, error)
 	QueryNowBlockTrans(*QueryNowBlockTransRequest, Server_QueryNowBlockTransServer) error
 	QueryPendingBlockTrans(*QueryPendingBlockTransRequest, Server_QueryPendingBlockTransServer) error
 	GenerateTransaction(context.Context, *GenerateTransRequest) (*GenerateTransResponse, error)
@@ -209,8 +209,8 @@ func (UnimplementedServerServer) QueryBalance(context.Context, *QueryBalanceRequ
 func (UnimplementedServerServer) QueryBalance20(context.Context, *QueryBalance20Request) (*QueryBalance20Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryBalance20 not implemented")
 }
-func (UnimplementedServerServer) QueryTransaction20GasPrice(context.Context, *QueryTransactionGasPriceRequest) (*QueryTransactionGasPriceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryTransaction20GasPrice not implemented")
+func (UnimplementedServerServer) QueryGasPriceByTransaction20(context.Context, *QueryGasPriceByTransaction20Request) (*QueryGasPriceByTransaction20Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryGasPriceByTransaction20 not implemented")
 }
 func (UnimplementedServerServer) QueryNowBlockTrans(*QueryNowBlockTransRequest, Server_QueryNowBlockTransServer) error {
 	return status.Errorf(codes.Unimplemented, "method QueryNowBlockTrans not implemented")
@@ -294,20 +294,20 @@ func _Server_QueryBalance20_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Server_QueryTransaction20GasPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryTransactionGasPriceRequest)
+func _Server_QueryGasPriceByTransaction20_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGasPriceByTransaction20Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServerServer).QueryTransaction20GasPrice(ctx, in)
+		return srv.(ServerServer).QueryGasPriceByTransaction20(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Server_QueryTransaction20GasPrice_FullMethodName,
+		FullMethod: Server_QueryGasPriceByTransaction20_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServerServer).QueryTransaction20GasPrice(ctx, req.(*QueryTransactionGasPriceRequest))
+		return srv.(ServerServer).QueryGasPriceByTransaction20(ctx, req.(*QueryGasPriceByTransaction20Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -428,8 +428,8 @@ var Server_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Server_QueryBalance20_Handler,
 		},
 		{
-			MethodName: "QueryTransaction20GasPrice",
-			Handler:    _Server_QueryTransaction20GasPrice_Handler,
+			MethodName: "QueryGasPriceByTransaction20",
+			Handler:    _Server_QueryGasPriceByTransaction20_Handler,
 		},
 		{
 			MethodName: "GenerateTransaction",

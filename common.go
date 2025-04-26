@@ -209,7 +209,7 @@ func (t *Server) QueryBalance20(addr, contactAddr string) (uint64, error) {
 	return res.GetBalance(), nil
 }
 
-func (t *Server) QueryTransaction20GasPrice(addr, contactAddr, method, jsonString, tTokenId string, tAmount, tTokenAmount int64) (uint64, error) {
+func (t *Server) QueryGasPriceByTransaction20(addr, contactAddr, method, jsonString, tTokenId string, tAmount, tTokenAmount int64) (uint64, error) {
 
 	if t.cli == nil {
 		if err := t.NewServer(); err != nil {
@@ -218,41 +218,41 @@ func (t *Server) QueryTransaction20GasPrice(addr, contactAddr, method, jsonStrin
 	}
 
 	util := pb.NewServerClient(t.cli)
-	var request *pb.QueryTransactionGasPriceRequest
+	var request *pb.QueryGasPriceByTransaction20Request
 	switch t.Target {
 	case BTC_MAIN:
-		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_BTC_MAIN, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_BTC_MAIN, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
 		break
 	case BTC_TEST:
-		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_BTC_TEST, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_BTC_TEST, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
 		break
 	case ETH_MAIN:
-		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_ETH_MAIN, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_ETH_MAIN, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
 		break
 	case ETH_GOERLI:
-		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_ETH_GOERLI, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_ETH_GOERLI, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
 		break
 	case ETH_SEPOLIA:
-		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_ETH_SEPOLIA, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_ETH_SEPOLIA, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
 		break
 	case TRON_MAIN:
-		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_TRON_MAIN, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_TRON_MAIN, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
 		break
 	case TRON_NILE:
-		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_TRON_NILE, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_TRON_NILE, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
 		break
 	case TRON_SHASTA:
-		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_TRON_SHASTA, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_TRON_SHASTA, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
 		break
 	case OKX_MAIN:
-		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_OKX_MAIN, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_OKX_MAIN, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
 		break
 	case OKX_TEST:
-		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_OKX_TEST, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_OKX_TEST, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
 		break
 	}
 
-	res, err := util.QueryTransaction20GasPrice(context.Background(), request)
+	res, err := util.QueryGasPriceByTransaction20(context.Background(), request)
 	if err != nil {
 		return 0, err
 	}

